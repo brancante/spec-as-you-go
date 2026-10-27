@@ -34,6 +34,7 @@ frame → scout → architect → slice → build → gates → learn ─┐
 | `sayg-pipeline` | GitHub Actions: checagens por PR e scan do SonarQube Community Build a cada N PRs mergeados |
 | `sayg-fit` | Manifesto vivo do produto: problema, segmento, diferencial, evidência de PMF |
 | `sayg-scale` | Leitura de escala, impacto de mercado e atratividade para investidores |
+| `sayg-what-would-elon-do` | Roast estilo Shark Tank da ideia, do produto ou do código: primeiros princípios, deletar partes, 10× e não 10%, metas impossíveis, impacto no mundo, comparações sem dó; cada crítica vem com a reconstrução |
 | `sayg-budget` | Consumo nas janelas de 5h/semanal/mensal, modo de orçamento para roteamento, upgrades e provedores mais baratos |
 
 ### SAYG board (widget ao lado do chat)
@@ -68,4 +69,4 @@ Para atualizar depois: `claude plugin marketplace update spec-as-you-go`.
 
 ## Status
 
-v0.6: skills, templates, templates de CI e `tools/repo-snapshot.sh`. Ainda não testado em campo.
+v0.7: skills, templates, templates de CI e `tools/repo-snapshot.sh`. Ainda não testado em campo.

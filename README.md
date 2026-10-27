@@ -36,6 +36,7 @@ frame → scout → architect → slice → build → gates → learn ─┐
 | `sayg-pipeline` | GitHub Actions: per-PR checks and SonarQube Community Build scan every N merged PRs |
 | `sayg-fit` | Living product manifesto: problem, segment, differentiation, PMF evidence |
 | `sayg-scale` | Evidence-graded scale, market impact and investor attractiveness read |
+| `sayg-what-would-elon-do` | Shark Tank-style roast of the idea, product or code: first principles, delete parts, 10× not 10%, impossible goals, world-changing scale, blunt comparisons; every hit comes with a rebuild |
 | `sayg-budget` | Usage across 5-hour/weekly/monthly windows, budget mode for routing, upgrades and cheaper providers |
 
 ### SAYG board (widget beside the chat)
@@ -53,7 +54,7 @@ State lives in `.sayg/` in your repo (`intent.md`, `architecture.md`, `stakehold
 
 ## Status
 
-v0.6: skills, templates, CI templates and `tools/repo-snapshot.sh`. Not field-tested yet. Not built: `sayg-pulse`, `sayg-observe`, CLI/MCP tools, non-Claude agents.
+v0.7: skills, templates, CI templates and `tools/repo-snapshot.sh`. Not field-tested yet. Not built: `sayg-pulse`, `sayg-observe`, CLI/MCP tools, non-Claude agents.
 
 ## Install (Claude Code)
 

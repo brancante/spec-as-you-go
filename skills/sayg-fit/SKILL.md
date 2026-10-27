@@ -29,4 +29,5 @@ Changing the target segment or the core value proposition. Present evidence for 
 ## Rules
 
 - Never present an assumption as evidence. Never invent market numbers, quotes or user counts.
+- When differentiation looks incremental, suggest a roast with `sayg-what-would-elon-do` to force first-principles and 10× alternatives.
 - Keep it to two pages. Move detail to the evidence log.

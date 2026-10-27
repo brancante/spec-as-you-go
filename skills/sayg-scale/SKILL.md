@@ -31,4 +31,5 @@ An honest investor's read, not a pitch. Output to `.sayg/product/scale-YYYY-MM-D
 - Never fabricate numbers, comparables or traction. If a number is estimated, show the arithmetic and assumptions.
 - A score with `assumed` evidence counts at most 3.
 - This is a decision aid, not a valuation or financial advice; say so in the report header.
+- For a provocation rather than a sober read (is this ambitious enough? what would 10× look like?), follow up with `sayg-what-would-elon-do`.
 - Technical scalability findings that need work go to `.sayg/discoveries.md` and, if structural, to `sayg-architect`.
