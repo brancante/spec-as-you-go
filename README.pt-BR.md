@@ -38,14 +38,14 @@ frame → scout → architect → slice → build → gates → learn ─┐
 
 ### SAYG board (widget ao lado do chat)
 
-Com muitas PRs abertas ao mesmo tempo, `/sayg-board` abre um painel com:
+`/sayg-board` abre um painel com uma linha-resumo (`PRs 2 ready · 3 blocked │ gate OK │ 2 critical/high vulns │ CI 92% │ 5h 40% 7d 62%`) e quatro abas (teclas 1–4):
 
-- **Ordem de merge**: PRs empilhadas depois da PR-mãe, prontas primeiro, depois as mais antigas, com aviso quando duas PRs mexem nos mesmos arquivos (faça rebase da seguinte depois do merge).
-- **Próxima ação de cada PR**: merge, corrigir CI (com o nome dos checks que falharam), resolver conflito, atualizar a branch, pedir review, atender mudanças pedidas ou tirar do rascunho.
-- **Deploys**: deployments recentes do GitHub e as últimas execuções de workflow na branch principal.
-- **Evolução**: células por estágio, fatias por status, descobertas abertas, PRs mergeadas nos últimos 7 dias.
+- **PRs**: ordem de merge (empilhadas depois da PR-mãe, prontas primeiro, depois as mais antigas), a próxima ação de cada uma (merge, corrigir CI com o nome dos checks, resolver conflito, atualizar branch, pedir review, atender mudanças, tirar do rascunho), avisos de arquivos em comum, PRs paradas e reviews esperando por você.
+- **Health**: último relatório do `sayg-sonar` (gate, cobertura, duplicação, BLOCKER/HIGH), taxa de sucesso e duração mediana do CI na branch principal, alertas do Dependabot, code scanning e secret scanning por severidade, problemas de segurança e hotspots do Sonar.
+- **Flow**: PRs mergeadas em 7 dias, tempo mediano de PR aberta até o merge, PRs paradas, deploys, células por estágio, fatias por status, descobertas abertas.
+- **AI**: janelas de 5 horas e semanal da sua assinatura com horário de reset, o modo de budget que o `sayg-budget` definiria, custo e contexto da sessão, e as skills usadas na sessão.
 
-Atualiza a cada 5 minutos e logo depois de `git push` ou `gh pr ...`, mostra um resumo na linha de status e abre sozinho em projetos que têm `.sayg/`. O Claude também lê a saída do comando, então dá para perguntar "o que eu mergeio agora?". Lê o GitHub via `gh api` com o seu próprio login (`gh auth login`).
+Atualiza a cada 5 minutos e logo depois de `git push` ou `gh pr ...`, mostra a linha-resumo na barra de status e abre sozinho em projetos com `.sayg/`. O Claude também lê a saída do comando, então dá para pedir "o que eu mergeio agora?" ou "corrige o CI da #12". Lê o GitHub via `gh api` com o seu login (`gh auth login`); o que o seu login não consegue ler aparece como `n/a`.
 
 O estado do projeto fica em `.sayg/`; o estado pessoal (perfil e budget) em `~/.sayg/`. Comece com: "use sayg-discover neste repositório".
 
@@ -68,4 +68,4 @@ Para atualizar depois: `claude plugin marketplace update spec-as-you-go`.
 
 ## Status
 
-v0.5: skills, templates, templates de CI e `tools/repo-snapshot.sh`. Ainda não testado em campo.
+v0.6: skills, templates, templates de CI e `tools/repo-snapshot.sh`. Ainda não testado em campo.

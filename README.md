@@ -40,20 +40,20 @@ frame → scout → architect → slice → build → gates → learn ─┐
 
 ### SAYG board (widget beside the chat)
 
-With many PRs open at once, `/sayg-board` opens a pane that shows:
+`/sayg-board` opens a pane with a one-line headline (`PRs 2 ready · 3 blocked │ gate OK │ 2 critical/high vulns │ CI 92% │ 5h 40% 7d 62%`) and four tabs (hotkeys 1–4):
 
-- **Merge order**: stacked PRs after their parent, ready ones first, then oldest, with a warning when two PRs touch the same files (rebase the later one after merging).
-- **Next action per PR**: merge, fix CI (names the failing checks), resolve conflicts, update branch, get a review, address changes, or mark ready.
-- **Deploys**: recent GitHub deployments and the latest workflow runs on the default branch.
-- **Evolution**: cells by stage, slices by status, open discoveries, PRs merged in the last 7 days.
+- **PRs**: merge order (stacked after parent, ready first, then oldest), the next action for each (merge, fix CI naming the failing checks, resolve conflicts, update branch, get a review, address changes, mark ready), file-overlap warnings, stale PRs and reviews waiting on you.
+- **Health**: latest `sayg-sonar` report (gate, coverage, duplication, BLOCKER/HIGH), CI pass rate and median duration on the default branch, Dependabot, code scanning and secret scanning alerts by severity, Sonar security issues and hotspots.
+- **Flow**: PRs merged in 7 days, median open-to-merge time, stale PRs, deploys, cells by stage, slices by status, open discoveries.
+- **AI**: your plan's 5-hour and weekly windows with reset times, the budget mode `sayg-budget` would set, session cost and context used, and the skills used this session.
 
-It refreshes every 5 minutes and shortly after `git push` or `gh pr ...`, shows a summary in the status line, and opens by itself in projects that have `.sayg/`. The command's output is also read by Claude, so you can ask "what should I merge next?". It reads GitHub through `gh api` with your own login (`gh auth login`).
+It refreshes every 5 minutes and shortly after `git push` or `gh pr ...`, puts the headline in the status line, and opens by itself in projects that have `.sayg/`. Claude reads the command's output too, so you can ask "what should I merge next?" or "fix the CI on #12". It reads GitHub through `gh api` with your own login (`gh auth login`); sections your login can't read show `n/a`.
 
 State lives in `.sayg/` in your repo (`intent.md`, `architecture.md`, `stakeholders.md`, `experience/`, `slices/`, `decisions/`, `discoveries.md`, `discovery/`, `product/`, `outbox/` for drafts the user sends) and, per person, in `~/.sayg/` (`profile.md`, `budget/`). Templates are in `templates/`, scripts in `tools/`. Composed skills and the roadmap are in [docs/landscape.md](docs/landscape.md).
 
 ## Status
 
-v0.5: skills, templates, CI templates and `tools/repo-snapshot.sh`. Not field-tested yet. Not built: `sayg-pulse`, `sayg-observe`, CLI/MCP tools, non-Claude agents.
+v0.6: skills, templates, CI templates and `tools/repo-snapshot.sh`. Not field-tested yet. Not built: `sayg-pulse`, `sayg-observe`, CLI/MCP tools, non-Claude agents.
 
 ## Install (Claude Code)
 
