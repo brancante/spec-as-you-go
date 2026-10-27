@@ -1,6 +1,6 @@
 {
   "name": "spec-as-you-go",
-  "version": "0.4.1",
+  "version": "0.5.0",
   "description": "Living, discovery-driven specs for system thinkers and fixers: frame, scout, slice, gate, learn.",
   "license": "MIT",
   "keywords": [
@@ -14,5 +14,6 @@
     "name": "Gustavo Brancante"
   },
   "homepage": "https://github.com/brancante/spec-as-you-go",
-  "repository": "https://github.com/brancante/spec-as-you-go"
+  "repository": "https://github.com/brancante/spec-as-you-go",
+  "types": "./types/index.d.ts"
 }

@@ -38,11 +38,22 @@ frame → scout → architect → slice → build → gates → learn ─┐
 | `sayg-scale` | Evidence-graded scale, market impact and investor attractiveness read |
 | `sayg-budget` | Usage across 5-hour/weekly/monthly windows, budget mode for routing, upgrades and cheaper providers |
 
+### SAYG board (widget beside the chat)
+
+With many PRs open at once, `/sayg-board` opens a pane that shows:
+
+- **Merge order**: stacked PRs after their parent, ready ones first, then oldest, with a warning when two PRs touch the same files (rebase the later one after merging).
+- **Next action per PR**: merge, fix CI (names the failing checks), resolve conflicts, update branch, get a review, address changes, or mark ready.
+- **Deploys**: recent GitHub deployments and the latest workflow runs on the default branch.
+- **Evolution**: cells by stage, slices by status, open discoveries, PRs merged in the last 7 days.
+
+It refreshes every 5 minutes and shortly after `git push` or `gh pr ...`, shows a summary in the status line, and opens by itself in projects that have `.sayg/`. The command's output is also read by Claude, so you can ask "what should I merge next?". It reads GitHub through `gh api` with your own login (`gh auth login`).
+
 State lives in `.sayg/` in your repo (`intent.md`, `architecture.md`, `stakeholders.md`, `experience/`, `slices/`, `decisions/`, `discoveries.md`, `discovery/`, `product/`, `outbox/` for drafts the user sends) and, per person, in `~/.sayg/` (`profile.md`, `budget/`). Templates are in `templates/`, scripts in `tools/`. Composed skills and the roadmap are in [docs/landscape.md](docs/landscape.md).
 
 ## Status
 
-v0.4: skills, templates, CI templates and `tools/repo-snapshot.sh`. Not field-tested yet. Not built: `sayg-pulse`, `sayg-observe`, CLI/MCP tools, non-Claude agents.
+v0.5: skills, templates, CI templates and `tools/repo-snapshot.sh`. Not field-tested yet. Not built: `sayg-pulse`, `sayg-observe`, CLI/MCP tools, non-Claude agents.
 
 ## Install (Claude Code)
 

@@ -36,6 +36,17 @@ frame → scout → architect → slice → build → gates → learn ─┐
 | `sayg-scale` | Leitura de escala, impacto de mercado e atratividade para investidores |
 | `sayg-budget` | Consumo nas janelas de 5h/semanal/mensal, modo de orçamento para roteamento, upgrades e provedores mais baratos |
 
+### SAYG board (widget ao lado do chat)
+
+Com muitas PRs abertas ao mesmo tempo, `/sayg-board` abre um painel com:
+
+- **Ordem de merge**: PRs empilhadas depois da PR-mãe, prontas primeiro, depois as mais antigas, com aviso quando duas PRs mexem nos mesmos arquivos (faça rebase da seguinte depois do merge).
+- **Próxima ação de cada PR**: merge, corrigir CI (com o nome dos checks que falharam), resolver conflito, atualizar a branch, pedir review, atender mudanças pedidas ou tirar do rascunho.
+- **Deploys**: deployments recentes do GitHub e as últimas execuções de workflow na branch principal.
+- **Evolução**: células por estágio, fatias por status, descobertas abertas, PRs mergeadas nos últimos 7 dias.
+
+Atualiza a cada 5 minutos e logo depois de `git push` ou `gh pr ...`, mostra um resumo na linha de status e abre sozinho em projetos que têm `.sayg/`. O Claude também lê a saída do comando, então dá para perguntar "o que eu mergeio agora?". Lê o GitHub via `gh api` com o seu próprio login (`gh auth login`).
+
 O estado do projeto fica em `.sayg/`; o estado pessoal (perfil e budget) em `~/.sayg/`. Comece com: "use sayg-discover neste repositório".
 
 ## Instalação (Claude Code)
@@ -57,4 +68,4 @@ Para atualizar depois: `claude plugin marketplace update spec-as-you-go`.
 
 ## Status
 
-v0.4: skills, templates, templates de CI e `tools/repo-snapshot.sh`. Ainda não testado em campo.
+v0.5: skills, templates, templates de CI e `tools/repo-snapshot.sh`. Ainda não testado em campo.
