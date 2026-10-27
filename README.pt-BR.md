@@ -38,6 +38,23 @@ frame → scout → architect → slice → build → gates → learn ─┐
 
 O estado do projeto fica em `.sayg/`; o estado pessoal (perfil e budget) em `~/.sayg/`. Comece com: "use sayg-discover neste repositório".
 
+## Instalação (Claude Code)
+
+Em um passo, dentro do Claude Code (v2.1.275 ou superior):
+
+```
+/plugin install spec-as-you-go --marketplace brancante/spec-as-you-go
+```
+
+Ou pelo terminal:
+
+```
+claude plugin marketplace add brancante/spec-as-you-go
+claude plugin install spec-as-you-go@spec-as-you-go
+```
+
+Para atualizar depois: `claude plugin marketplace update spec-as-you-go`.
+
 ## Status
 
 v0.4: skills, templates, templates de CI e `tools/repo-snapshot.sh`. Ainda não testado em campo.

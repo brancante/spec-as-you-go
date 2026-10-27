@@ -1,0 +1,14 @@
+{
+  "name": "spec-as-you-go",
+  "description": "Living, discovery-driven specs for system thinkers and fixers.",
+  "owner": {
+    "name": "Gustavo Brancante"
+  },
+  "plugins": [
+    {
+      "name": "spec-as-you-go",
+      "source": "./",
+      "description": "Skills from discovery and UI prototype to production: profile-adaptive discovery, maturity stages, stakeholders and cross-repo overlap, cell architecture, gates, Sonar CI, product fit, scale reads and AI budget."
+    }
+  ]
+}

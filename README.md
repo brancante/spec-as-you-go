@@ -46,10 +46,19 @@ v0.4: skills, templates, CI templates and `tools/repo-snapshot.sh`. Not field-te
 
 ## Install (Claude Code)
 
-Plugin marketplace publishing is not set up yet. For now, clone and load as a local plugin:
+One step, inside Claude Code (v2.1.275 or later):
 
 ```
-git clone <this repo> && claude --plugin-dir ./spec-as-you-go
+/plugin install spec-as-you-go --marketplace brancante/spec-as-you-go
 ```
+
+Or from your shell:
+
+```
+claude plugin marketplace add brancante/spec-as-you-go
+claude plugin install spec-as-you-go@spec-as-you-go
+```
+
+Update later with `claude plugin marketplace update spec-as-you-go`. To try it without installing: `git clone https://github.com/brancante/spec-as-you-go && claude --plugin-dir ./spec-as-you-go`.
 
 Then start with: "use sayg-discover on this repo".
