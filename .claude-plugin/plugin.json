@@ -1,0 +1,7 @@
+{
+  "name": "spec-as-you-go",
+  "version": "0.4.0",
+  "description": "Living, discovery-driven specs for system thinkers and fixers: frame, scout, slice, gate, learn.",
+  "license": "MIT",
+  "keywords": ["spec-driven-development", "skills", "architecture", "security", "agents"]
+}

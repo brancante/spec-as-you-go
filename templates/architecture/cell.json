@@ -1,0 +1,11 @@
+{
+  "name": "billing",
+  "status": "lab",
+  "stage": "S0",
+  "target_stage": "S2",
+  "owner": "",
+  "purpose": "One sentence: the business capability this cell owns",
+  "contract": "cells/billing/contract",
+  "slices": [],
+  "decisions": []
+}

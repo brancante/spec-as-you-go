@@ -1,0 +1,91 @@
+name: sayg-sonar
+
+# Full SonarQube Community Build scan of main every N merged PRs,
+# plus weekly and on demand. Ephemeral server unless vars.SONAR_HOST_URL is set.
+on:
+  pull_request:
+    types: [closed]
+    branches: [main]
+  schedule:
+    - cron: '17 4 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: read
+
+concurrency:
+  group: sayg-sonar
+  cancel-in-progress: false
+
+jobs:
+  due:
+    if: github.event_name != 'pull_request' || github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    outputs:
+      run: ${{ steps.count.outputs.run }}
+    steps:
+      - id: count
+        env:
+          GH_TOKEN: ${{ github.token }}
+          EVENT: ${{ github.event_name }}
+          REPO: ${{ github.repository }}
+          EVERY: ${{ vars.SAYG_SCAN_EVERY_N_PRS || '10' }}
+        run: |
+          if [ "$EVENT" != "pull_request" ]; then
+            echo "run=true" >> "$GITHUB_OUTPUT"; exit 0
+          fi
+          merged=$(gh api -X GET search/issues -f q="repo:$REPO is:pr is:merged base:main" --jq .total_count)
+          echo "Merged PRs: $merged (scan every $EVERY)"
+          if [ $((merged % EVERY)) -eq 0 ]; then run=true; else run=false; fi
+          echo "run=$run" >> "$GITHUB_OUTPUT"
+
+  scan:
+    needs: due
+    if: needs.due.outputs.run == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      SONAR_PROJECT_KEY: ${{ vars.SONAR_PROJECT_KEY || github.event.repository.name }}
+      SAYG_MAX_BLOCKERS: ${{ vars.SAYG_MAX_BLOCKERS || '0' }}
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Use persistent SonarQube
+        if: vars.SONAR_HOST_URL != ''
+        env:
+          HOST: ${{ vars.SONAR_HOST_URL }}
+          TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          echo "SONAR_HOST_URL=$HOST" >> "$GITHUB_ENV"
+          echo "SONAR_TOKEN=$TOKEN" >> "$GITHUB_ENV"
+
+      - name: Start ephemeral SonarQube Community Build
+        if: vars.SONAR_HOST_URL == ''
+        run: bash .github/sayg/sonar-ephemeral.sh
+
+      # Optional: produce coverage before scanning, e.g.
+      # - uses: pnpm/action-setup@v4
+      # - run: pnpm install --frozen-lockfile && pnpm turbo run test -- --coverage
+
+      - name: SonarQube scan
+        id: scan
+        continue-on-error: true
+        uses: SonarSource/sonarqube-scan-action@v8
+        with:
+          args: >
+            -Dsonar.projectKey=${{ env.SONAR_PROJECT_KEY }}
+            -Dsonar.qualitygate.wait=true
+
+      - name: Report
+        run: bash .github/sayg/sonar-report.sh
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: sonar-report
+          path: sonar-report.json
+          if-no-files-found: ignore
