@@ -18,9 +18,43 @@ export type PrRow = {
   isStale: boolean
   /** The signed-in GitHub user is a requested reviewer. */
   needsMyReview: boolean
+  /** Where a click goes: the Claude Code session that made the PR when its body links one, else the PR conversation. */
+  threadUrl: string
+  headSha: string
+  migration: Migration
 }
 
+/** Schema migrations (database) and contract changes (a cell's public surface) a PR carries. */
+export type Migration = { kind: 'none' | 'schema' | 'contract' | 'both'; files: string[] }
+
+export type MergedRow = {
+  number: number
+  title: string
+  url: string
+  threadUrl: string
+  mergedAt: string
+  sha: string
+  migration: Migration
+  /** Carries a migration and merged after the last successful production deploy (or no deploy data). */
+  isPendingDeploy: boolean
+}
+
+/** One short sentence each, researched on the web by sayg-insights; read from .sayg/insights/pr-<n>.json. */
+export type Insight = {
+  pr: number
+  sha: string
+  generatedAt: string
+  model: string
+  insight: string
+  improvement: string
+  critique: string
+  sources: { title: string; url: string }[]
+}
+
+export type Generating = { prs: number[]; startedAt: number }
+
 export type DeployRow = {
+  kind: 'deployment' | 'run'
   name: string
   state: string
   ref: string
@@ -68,6 +102,8 @@ export type Board = {
   me: string
   refreshedAt: number
   prs: PrRow[]
+  merged: MergedRow[]
+  lastProductionDeployAt: string | null
   deploys: DeployRow[]
   evolution: Evolution
   sonar: Sonar | null
@@ -99,6 +135,8 @@ declare module 'claude-code' {
       refresh: Refresh
       ai: Shaped<Ai>
       tab: Tab
+      insights: Shaped<Record<string, Insight>>
+      generating: Generating
     }
   }
 }

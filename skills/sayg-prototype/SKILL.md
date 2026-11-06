@@ -7,6 +7,10 @@ description: Use for stages S0–S2 of Spec as you go - turning an idea or featu
 
 > Adapt questions, vocabulary, evidence and autonomy to the builder profile (`sayg-profile`), per area of depth.
 
+> **Model:** understanding the idea, designing it and shaping its interface with the code run on the strongest model available at high effort (Opus by default, the top tier when the stakes justify it). If this session runs a weaker model, do those steps in a subagent with `model: opus`; mechanical steps follow `sayg-slice` routing.
+
+> **Wiki first:** before reading code to understand, change or judge it, read the project wiki (`openwiki/`, index first; see `sayg-setup`), then only the code it points to. Say when the wiki is missing or stale for the area, and update it with the change.
+
 Experience first, engineering second, and nothing thrown away: the prototype is built in the real structure, so going to production means replacing mocks with a server, not rewriting the UI.
 
 ## S0 Sketch

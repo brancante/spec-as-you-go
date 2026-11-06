@@ -7,6 +7,8 @@ description: Use after implementing a slice in a Spec as you go project, and bef
 
 > Adapt questions, vocabulary, evidence and autonomy to the builder profile (`sayg-profile`), per area of depth.
 
+> **Wiki first:** before reading code to understand, change or judge it, read the project wiki (`openwiki/`, index first; see `sayg-setup`), then only the code it points to. Say when the wiki is missing or stale for the area, and update it with the change.
+
 Quality is checked continuously, per slice, in proportion to risk and to the cell's stage (the stage table in `sayg-stage` sets the minimum per gate). Run only the gates the slice's risk notes call for, plus security whenever input, auth, data or dependencies are touched. Stakeholder approvals the stage requires (`sayg-stakeholders`) are part of the gate: a missing sign-off is amber before S4 and red at S5.
 
 ## Security gate

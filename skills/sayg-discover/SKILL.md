@@ -5,11 +5,17 @@ description: Entry point of Spec as you go for any project, new or existing. Run
 
 # sayg-discover
 
+> Adapt questions, vocabulary, evidence and autonomy to the builder profile (`sayg-profile`), per area of depth.
+
+> **Model:** understanding the idea, designing it and shaping its interface with the code run on the strongest model available at high effort (Opus by default, the top tier when the stakes justify it). If this session runs a weaker model, do those steps in a subagent with `model: opus`; mechanical steps follow `sayg-slice` routing.
+
+> **Wiki first:** before reading code to understand, change or judge it, read the project wiki (`openwiki/`, index first; see `sayg-setup`), then only the code it points to. Say when the wiki is missing or stale for the area, and update it with the change.
+
 Discovery has a shared core for both modes. Brownfield adds evidence from the code; greenfield adds evidence from the field. Both end in the same `.sayg/` state, so the rest of the loop doesn't care how the project started.
 
 ## 0. Setup
 
-1. Load the builder profile (`sayg-profile`); create it if missing. Every question below is phrased for the user's depth **in that question's area** (see `templates/discovery/questions.md`, which gives both phrasings).
+1. Check the environment with `sayg-setup` on first use in a repo (GitHub login, views, CI, wiki). Load the builder profile (`sayg-profile`); create it if missing. Every question below is phrased for the user's depth **in that question's area** (see `templates/discovery/questions.md`, which gives both phrasings).
 2. Detect the mode: source code and history present → **brownfield**; otherwise → **greenfield**. If `.sayg/` already exists, this is a re-discovery: read it and report what changed since the last discovery.
 3. Discovery is read-only for the product code. The only writes are in `.sayg/`.
 
@@ -17,6 +23,8 @@ Discovery has a shared core for both modes. Brownfield adds evidence from the co
 
 Run the assessment in a subagent so the main context stays clean, and give it this checklist. Every finding needs evidence (file, command output); "not checked" is allowed, guessing is not.
 
+- **Wiki**: if `openwiki/` exists, read it first and assess the code against it; if not, recommend it through `sayg-setup`.
+- **Wiki**: if `openwiki/` exists, read it first and assess the code against it; if not, recommend it through `sayg-setup`.
 - **Snapshot**: run `tools/repo-snapshot.sh <repo>` for size, languages, structure signals, git hotspots and contributor concentration.
 - **Architecture**: infer the C4 container view; entry points, modules, data stores, external services; where boundaries are clear and where they leak.
 - **Quality**: tests (kinds, rough coverage, do they run?), lint/typecheck, CI, build reproducibility.

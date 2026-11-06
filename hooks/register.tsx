@@ -5,13 +5,16 @@
 import { atom, read, update } from 'claude-code'
 import type { EngineInterface, Register } from 'claude-code'
 
-import type { Ai, Board, DeployRow, Evolution, PrState, Security, Severity, Sonar, Tab } from '../types'
+import type { Board, DeployRow, Evolution, MergedRow, PrState, Security, Severity, Sonar, Tab } from '../types'
 import {
   budgetMode,
   ciHealth,
   cycleHours,
   glyph,
   headline,
+  isPendingDeploy,
+  lastProductionDeploy,
+  migrationOf,
   order,
   parseRemote,
   severityCounts,
@@ -20,9 +23,12 @@ import {
   summarizeChecks,
   summarizeReviews,
   toText,
+  featuresText,
+  threadUrl,
   windowLabel,
   type PrInput,
 } from './board'
+import { FEATURES_PANE, FEATURES_TITLE, loadInsights, renderFeatures } from './features'
 
 const PANE = 'sayg-board'
 const TITLE = 'SAYG board'
@@ -30,9 +36,10 @@ const REFRESH_MS = 5 * 60 * 1000
 // Commands after which the board is likely stale.
 const CHANGES_PRS = /\b(git push|gh pr (create|merge|ready|close|review)|gh workflow run)\b/
 
-// Change a tag when its type's fields change: it declines what an earlier
-// version stored, which outlives a reload.
-const board = atom({ plugin: 'spec-as-you-go', key: 'board' } as const, null, { shape: 'board-2' })
+// Session values, declared in each file that reads or writes them (the engine's
+// state scan reads atoms from the file that uses them). Keep refs and shape
+// tags identical to the other file's; change a tag when its type's fields change.
+const board = atom({ plugin: 'spec-as-you-go', key: 'board' } as const, null, { shape: 'board-3' })
 const ai = atom(
   { plugin: 'spec-as-you-go', key: 'ai' } as const,
   { skills: {}, windows: [], costUsd: null, contextPercent: null },
@@ -40,6 +47,7 @@ const ai = atom(
 )
 const refreshing = atom({ plugin: 'spec-as-you-go', key: 'refresh' } as const, { isLoading: false })
 const tab = atom({ plugin: 'spec-as-you-go', key: 'tab' } as const, 'prs')
+const insights = atom({ plugin: 'spec-as-you-go', key: 'insights' } as const, {}, { shape: 'insights-1' })
 
 const TABS: { id: Tab; label: string; hotkey: string }[] = [
   { id: 'prs', label: 'PRs', hotkey: '1' },
@@ -120,15 +128,18 @@ async function loadPr($: EngineInterface, repo: string, number: number): Promise
     ...summarizeReviews(reviews.map((r: any) => ({ user: r.user?.login ?? '', state: r.state }))),
     requestedReviewers: (pull.requested_reviewers ?? []).map((u: any) => u.login),
     files: files.map((f: any) => f.filename),
+    body: pull.body ?? '',
+    headSha: pull.head.sha,
   }
 }
 
 async function loadDeploys($: EngineInterface, repo: string, branch: string, runs: any[]): Promise<DeployRow[]> {
   const deployments: any[] = (await ghOrNull($, `repos/${repo}/deployments?per_page=5`)) ?? []
-  const rows = await mapLimit(deployments, 5, async d => {
+  const rows: DeployRow[] = await mapLimit(deployments, 5, async d => {
     const [status] = (await ghOrNull($, `repos/${repo}/deployments/${d.id}/statuses?per_page=1`)) ?? []
 
     return {
+      kind: 'deployment' as const,
       name: d.environment,
       state: status?.state ?? 'pending',
       ref: d.ref,
@@ -138,6 +149,7 @@ async function loadDeploys($: EngineInterface, repo: string, branch: string, run
   })
   for (const run of runs.slice(0, 3)) {
     rows.push({
+      kind: 'run',
       name: `${branch}: ${run.name}`,
       state: run.conclusion ?? run.status,
       ref: run.head_sha.slice(0, 7),
@@ -255,6 +267,11 @@ async function refresh($: EngineInterface): Promise<Board | null> {
       (await ghOrNull($, `repos/${repo}/actions/runs?branch=${encodeURIComponent(meta.default_branch)}&per_page=20`))
         ?.workflow_runs ?? []
     const weekAgo = now - 7 * 24 * 60 * 60 * 1000
+    const twoWeeksAgo = now - 14 * 24 * 60 * 60 * 1000
+    const recentMerged = closed.filter(p => p.merged_at && Date.parse(p.merged_at) >= twoWeeksAgo).slice(0, 10)
+    const mergedFiles = await mapLimit(recentMerged, 4, async p =>
+      ((await ghOrNull($, `repos/${repo}/pulls/${p.number}/files?per_page=100`)) ?? []).map((f: any) => f.filename as string),
+    )
     const merged = closed
       .filter(p => p.merged_at && Date.parse(p.merged_at) >= weekAgo)
       .map(p => ({ createdAt: p.created_at, mergedAt: p.merged_at }))
@@ -264,11 +281,29 @@ async function refresh($: EngineInterface): Promise<Board | null> {
       loadSecurity($, repo),
       loadEvolution($),
     ])
+    const lastProductionDeployAt = lastProductionDeploy(deploys)
+    const mergedRows: MergedRow[] = recentMerged.map((p, i) => {
+      const migration = migrationOf(mergedFiles[i] ?? [])
+
+      return {
+        number: p.number,
+        title: p.title,
+        url: p.html_url,
+        threadUrl: threadUrl(p.body ?? '', p.html_url),
+        mergedAt: p.merged_at,
+        sha: p.head?.sha ?? '',
+        migration,
+        isPendingDeploy: isPendingDeploy(migration, p.merged_at, lastProductionDeployAt),
+      }
+    })
+    await loadInsights($).catch(() => undefined)
     const next: Board = {
       repo,
       me: login,
       refreshedAt: now,
       prs,
+      merged: mergedRows,
+      lastProductionDeployAt,
       deploys,
       evolution,
       sonar,
@@ -341,6 +376,10 @@ export const register: Register = on => {
       name: 'sayg-board',
       description: 'PR merge order and next actions, code health, security, flow and AI usage',
     })
+    await $.command.register({
+      name: 'sayg-features',
+      description: 'Open and merged PRs, migrations, and a researched insight, improvement and critique for each',
+    })
     // Open unasked only where the project uses Spec as you go.
     if (await $.fs.exists(`${await $.session.cwd()}/.sayg`)) void $.ui.open({ id: PANE, title: TITLE })
     void refresh($)
@@ -358,6 +397,18 @@ export const register: Register = on => {
 
     return { text: toText(current, await read($, ai), await $.clock.now()) + warning }
   })
+
+  on('command.run', { command: 'sayg-features' }, async $ => {
+    void $.ui.open({ id: FEATURES_PANE, title: FEATURES_TITLE })
+    const current = await refresh($)
+    if (!current) return { text: `SAYG features: ${(await read($, refreshing)).error ?? 'nothing to show yet'}` }
+
+    return { text: featuresText(current, await read($, insights)) }
+  })
+
+  on('ui.render', { component: 'Pane', requestId: 'sayg-features' }, async ($, e) =>
+    renderFeatures($, e, () => void refresh($)),
+  )
 
   on('skill.prompt', async ($, e, next) => {
     const name = e.pluginName ? `${e.pluginName}:${e.skill}` : e.skill

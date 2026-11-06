@@ -1,7 +1,7 @@
 // Pure logic of the sayg board: what each PR needs next, the order to merge
 // them in, and the health, flow and AI summaries. No `$` here, so it is
 // tested on its own.
-import type { Ai, Board, BudgetMode, CiHealth, PrRow, PrState, Severity, Window } from '../types'
+import type { Ai, Board, BudgetMode, CiHealth, DeployRow, Insight, Migration, PrRow, PrState, Severity, Window } from '../types'
 
 export type PrInput = {
   number: number
@@ -21,6 +21,8 @@ export type PrInput = {
   hasChangesRequested: boolean
   requestedReviewers: string[]
   files: string[]
+  body: string
+  headSha: string
 }
 
 const RANK: Record<PrState, number> = { ready: 0, waiting: 1, blocked: 2, draft: 3 }
@@ -104,6 +106,9 @@ export function order(prs: PrInput[], me = '', now = Date.now()): PrRow[] {
       overlaps,
       isStale: now - Date.parse(pr.updatedAt) >= STALE_DAYS * DAY_MS,
       needsMyReview: me !== '' && pr.requestedReviewers.includes(me),
+      threadUrl: threadUrl(pr.body, pr.url),
+      headSha: pr.headSha,
+      migration: migrationOf(pr.files),
     })
   }
 
@@ -279,6 +284,97 @@ export function toText(board: Board, ai: Ai | null, now: number): string {
       `AI: budget mode ${budgetMode(ai.windows, now)}; skills this session: ${skills.length > 0 ? skills.map(([s, n]) => `${s} ×${n}`).join(', ') : 'none'}`,
     )
   }
+
+  return lines.join('\n')
+}
+
+// Database migration folders and files of the common tools, and a sayg cell's own db/.
+const SCHEMA = /(^|\/)(migrations?|migrate|alembic\/versions|prisma\/migrations|db\/migrate|flyway|liquibase|supabase\/migrations)\/|(^|\/)cells\/[^/]+\/db\/|\.sql$/
+// A cell's public surface: changing it means its consumers have to follow.
+const CONTRACT = /(^|\/)cells\/[^/]+\/contract\//
+
+export function migrationOf(files: string[]): Migration {
+  const schema = files.filter(f => SCHEMA.test(f))
+  const contract = files.filter(f => CONTRACT.test(f))
+  const kind = schema.length > 0 && contract.length > 0 ? 'both' : schema.length > 0 ? 'schema' : contract.length > 0 ? 'contract' : 'none'
+
+  return { kind, files: [...schema, ...contract] }
+}
+
+/** The Claude Code session a PR body links (Claude Code PRs end with one), else the PR's own conversation. */
+export function threadUrl(body: string, prUrl: string): string {
+  return body.match(/https:\/\/claude\.ai\/code\/session_[A-Za-z0-9]+/)?.[0] ?? prUrl
+}
+
+/** When production last deployed successfully, from GitHub deployments to an environment named like prod. */
+export function lastProductionDeploy(deploys: DeployRow[]): string | null {
+  const times = deploys
+    .filter(d => d.kind === 'deployment' && /prod/i.test(d.name) && d.state === 'success')
+    .map(d => d.at)
+    .sort()
+
+  return times.at(-1) ?? null
+}
+
+export function isPendingDeploy(migration: Migration, mergedAt: string, lastProduction: string | null): boolean {
+  if (migration.kind === 'none') return false
+
+  return lastProduction === null || Date.parse(mergedAt) > Date.parse(lastProduction)
+}
+
+export const SENTENCE_MAX = 180
+
+/** Reads one .sayg/insights/pr-<n>.json written by sayg-insights; undefined when it does not hold the three sentences. */
+export function parseInsight(text: string): Insight | undefined {
+  let raw: any
+  try {
+    raw = JSON.parse(text)
+  } catch {
+    return undefined
+  }
+  const sentence = (v: unknown) => (typeof v === 'string' && v.trim() !== '' ? v.trim().slice(0, SENTENCE_MAX) : undefined)
+  const insight = sentence(raw?.insight)
+  const improvement = sentence(raw?.improvement)
+  const critique = sentence(raw?.critique)
+  if (typeof raw?.pr !== 'number' || !insight || !improvement || !critique) return undefined
+
+  return {
+    pr: raw.pr,
+    sha: typeof raw.sha === 'string' ? raw.sha : '',
+    generatedAt: typeof raw.generatedAt === 'string' ? raw.generatedAt : '',
+    model: typeof raw.model === 'string' ? raw.model : '',
+    insight,
+    improvement,
+    critique,
+    sources: Array.isArray(raw.sources)
+      ? raw.sources
+          .filter((s: any) => typeof s?.url === 'string' && /^https?:\/\//.test(s.url))
+          .map((s: any) => ({ title: String(s.title ?? s.url), url: s.url }))
+      : [],
+  }
+}
+
+/** Plain-text features view, for the slash command's output that the model also reads. */
+export function featuresText(board: Board, insights: Record<string, Insight>): string {
+  const lines = [`${board.repo}: ${board.prs.length} open, ${board.merged.length} merged in 14 days`]
+  const pending = board.merged.filter(m => m.isPendingDeploy)
+  const openMigrations = board.prs.filter(p => p.migration.kind !== 'none')
+  if (pending.length + openMigrations.length > 0) {
+    lines.push('', 'Migrations:')
+    for (const m of pending) lines.push(`- #${m.number} merged, not deployed yet: ${m.migration.files.join(', ')}`)
+    for (const p of openMigrations) lines.push(`- #${p.number} open, carries ${p.migration.kind}: ${p.migration.files.join(', ')}`)
+  }
+  const describe = (number: number, title: string, state: string, sha: string) => {
+    lines.push(`- #${number} ${title} (${state})`)
+    const found = insights[String(number)]
+    if (!found) return lines.push('  no insight yet')
+    if (found.sha && sha && found.sha !== sha) lines.push('  (insight older than the latest commit)')
+    lines.push(`  insight: ${found.insight}`, `  improve: ${found.improvement}`, `  critique: ${found.critique}`)
+  }
+  if (board.prs.length > 0) lines.push('', 'Open:')
+  for (const p of board.prs) describe(p.number, p.title, p.state, p.headSha)
+  if (board.merged.length > 0) lines.push('', 'Merged:')
+  for (const m of board.merged) describe(m.number, m.title, 'merged', m.sha)
 
   return lines.join('\n')
 }

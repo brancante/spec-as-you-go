@@ -7,6 +7,8 @@ description: Use at the end of every slice in a Spec as you go project, or when 
 
 > Adapt questions, vocabulary, evidence and autonomy to the builder profile (`sayg-profile`), per area of depth.
 
+> **Wiki first:** before reading code to understand, change or judge it, read the project wiki (`openwiki/`, index first; see `sayg-setup`), then only the code it points to. Say when the wiki is missing or stale for the area, and update it with the change.
+
 Building is the main source of requirements. Capture them before the context is gone.
 
 ## Process

@@ -35,6 +35,8 @@ const base: PrInput = {
   hasChangesRequested: false,
   requestedReviewers: [],
   files: ['a.ts'],
+  body: '',
+  headSha: 'abc',
 }
 const pr = (over: Partial<PrInput>): PrInput => ({ ...base, ...over })
 
@@ -131,7 +133,9 @@ const BOARD: Board = {
     'me',
     NOW,
   ),
-  deploys: [{ name: 'production', state: 'success', ref: 'main', at: '2026-10-19T00:00:00Z', url: '' }],
+  merged: [],
+  lastProductionDeployAt: null,
+  deploys: [{ kind: 'deployment', name: 'production', state: 'success', ref: 'main', at: '2026-10-19T00:00:00Z', url: '' }],
   evolution: { stages: { S1: 1, S3: 2 }, slices: { done: 3, building: 1 }, discoveries: 4 },
   sonar: {
     runId: 9,
@@ -186,7 +190,7 @@ const PANE = {
 } as const
 
 const SEED = (tabValue?: string) => (_: unknown, e: { key: string }, next: (e: any) => any) => {
-  if (e.key === 'board') return { value: { value: { shape: 'board-2', value: BOARD }, version: 1 } }
+  if (e.key === 'board') return { value: { value: { shape: 'board-3', value: BOARD }, version: 1 } }
   if (e.key === 'ai') return { value: { value: { shape: 'ai-1', value: AI }, version: 1 } }
   if (e.key === 'refresh') return { value: { value: { isLoading: false }, version: 1 } }
   if (e.key === 'tab' && tabValue) return { value: { value: tabValue, version: 1 } }

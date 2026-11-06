@@ -16,6 +16,7 @@ Spec as you go stays a thin layer: it orchestrates, and borrows proven skills fo
 | Accessibility checks | axe-core (with Playwright) | `sayg-prototype` S1, regression later |
 | Consumer-driven contract tests across repos | Pact | `sayg-stakeholders` shared contracts |
 | Service and owner catalog | Backstage, `CODEOWNERS` | `sayg-stakeholders` overlap detection |
+| Codebase wiki for agents | [OpenWiki](https://github.com/langchain-ai/openwiki) (LangChain, MIT) | `sayg-setup` proposes it; every code-touching skill reads it first |
 | Usage and cost from local Claude Code logs | [ccusage](https://github.com/ryoppippi/ccusage) | `sayg-budget` daily/weekly/monthly/5-hour reports |
 | Brownfield onboarding | `legacy-to-ai-ready` (nicepkg/ai-workflow), `onboard` (parcadei/continuous-claude-v3) | prior art for `sayg-discover`; small community projects, review before adopting |
 

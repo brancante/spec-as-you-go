@@ -7,6 +7,10 @@ description: Roast an idea, product, architecture or codebase as if Elon Musk we
 
 > Adapt questions, vocabulary, evidence and autonomy to the builder profile (`sayg-profile`), per area of depth.
 
+> **Model:** understanding the idea, designing it and shaping its interface with the code run on the strongest model available at high effort (Opus by default, the top tier when the stakes justify it). If this session runs a weaker model, do those steps in a subagent with `model: opus`; mechanical steps follow `sayg-slice` routing.
+
+> **Wiki first:** before reading code to understand, change or judge it, read the project wiki (`openwiki/`, index first; see `sayg-setup`), then only the code it points to. Say when the wiki is missing or stale for the area, and update it with the change.
+
 A roast that exists to change minds, not to entertain. Every hit lands on the idea or the code, never on the person, and every hit comes with the rebuild: what to try instead, this week.
 
 This is a lens built from principles Elon Musk has stated publicly (first principles, his five-step "algorithm", "the best part is no part", 10x over 10%, aggressive timelines). It is not his opinion, not affiliated with him, and must never put words in his mouth: no invented quotes, no "Elon would say…" claims about specific facts.

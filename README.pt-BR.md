@@ -20,6 +20,7 @@ frame → scout → architect → slice → build → gates → learn ─┐
 
 | Skill | Função |
 |---|---|
+| `sayg-setup` | Checagem e configuração do ambiente: login do GitHub, painéis, CI/Sonar, uso, e um wiki do código com o OpenWiki para que toda mudança leia o wiki primeiro |
 | `sayg-profile` | Nível técnico e de negócio, estilo de decisão e assinatura; como cada skill se adapta |
 | `sayg-discover` | Porta de entrada. Discovery greenfield ou brownfield com núcleo comum; avaliação do código, coleta de evidências, primeiras fatias |
 | `sayg-stage` | Escada de maturidade S0 esboço → S5 produção; critérios de saída; gates e aprovações escalam com o estágio |
@@ -35,6 +36,7 @@ frame → scout → architect → slice → build → gates → learn ─┐
 | `sayg-fit` | Manifesto vivo do produto: problema, segmento, diferencial, evidência de PMF |
 | `sayg-scale` | Leitura de escala, impacto de mercado e atratividade para investidores |
 | `sayg-what-would-elon-do` | Roast estilo Shark Tank da ideia, do produto ou do código: primeiros princípios, deletar partes, 10× e não 10%, metas impossíveis, impacto no mundo, comparações sem dó; cada crítica vem com a reconstrução |
+| `sayg-insights` | Um insight, uma melhoria e uma crítica por PR, com pesquisa na web (projetos anteriores, mercado, o que a tecnologia já entrega, como a IA muda as expectativas), no modelo mais forte |
 | `sayg-budget` | Consumo nas janelas de 5h/semanal/mensal, modo de orçamento para roteamento, upgrades e provedores mais baratos |
 
 ### SAYG board (widget ao lado do chat)
@@ -47,6 +49,12 @@ frame → scout → architect → slice → build → gates → learn ─┐
 - **AI**: janelas de 5 horas e semanal da sua assinatura com horário de reset, o modo de budget que o `sayg-budget` definiria, custo e contexto da sessão, e as skills usadas na sessão.
 
 Atualiza a cada 5 minutos e logo depois de `git push` ou `gh pr ...`, mostra a linha-resumo na barra de status e abre sozinho em projetos com `.sayg/`. O Claude também lê a saída do comando, então dá para pedir "o que eu mergeio agora?" ou "corrige o CI da #12". Lê o GitHub via `gh api` com o seu login (`gh auth login`); o que o seu login não consegue ler aparece como `n/a`.
+
+### SAYG features (visão customizada)
+
+`/sayg-features` abre um painel com as PRs abertas e as mergeadas nos últimos 14 dias, as **migrações** que elas trazem (arquivos de schema, o `contract/` de uma célula), com destaque quando já foram mergeadas mas ainda não foram para produção, e para cada PR três frases curtas: 💡 **insight**, 🔧 **melhoria**, ⚠️ **crítica**. Clicar numa PR abre o thread: a sessão do Claude Code que criou a PR, quando o corpo dela tem o link, ou a conversa da PR. **Generate insights** dispara um subagente em background num modelo forte (Opus por padrão; `insightModel` em `.sayg/config.json` para trocar), que lê o wiki, pesquisa na web e grava `.sayg/insights/pr-<n>.json`; ele pausa quando o budget está apertado.
+
+Toda skill de entendimento e desenho roda no modelo mais forte, e toda skill que mexe em código lê primeiro o wiki do projeto (`openwiki/`, configurado pelo `sayg-setup`).
 
 O estado do projeto fica em `.sayg/`; o estado pessoal (perfil e budget) em `~/.sayg/`. Comece com: "use sayg-discover neste repositório".
 
@@ -69,4 +77,4 @@ Para atualizar depois: `claude plugin marketplace update spec-as-you-go`.
 
 ## Status
 
-v0.7: skills, templates, templates de CI e `tools/repo-snapshot.sh`. Ainda não testado em campo.
+v0.8: skills, templates, templates de CI e `tools/repo-snapshot.sh`. Ainda não testado em campo.

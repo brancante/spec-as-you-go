@@ -7,6 +7,8 @@ description: Use at the start of any new product, feature or change in a Spec as
 
 > Adapt questions, vocabulary, evidence and autonomy to the builder profile (`sayg-profile`), per area of depth.
 
+> **Model:** understanding the idea, designing it and shaping its interface with the code run on the strongest model available at high effort (Opus by default, the top tier when the stakes justify it). If this session runs a weaker model, do those steps in a subagent with `model: opus`; mechanical steps follow `sayg-slice` routing.
+
 Capture *why* before *what*. Keep it short; this is the only document meant to be stable.
 
 ## Process

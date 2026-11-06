@@ -7,6 +7,10 @@ description: Use when starting a new product or when the current structure resis
 
 > Adapt questions, vocabulary, evidence and autonomy to the builder profile (`sayg-profile`), per area of depth.
 
+> **Model:** understanding the idea, designing it and shaping its interface with the code run on the strongest model available at high effort (Opus by default, the top tier when the stakes justify it). If this session runs a weaker model, do those steps in a subagent with `model: opus`; mechanical steps follow `sayg-slice` routing.
+
+> **Wiki first:** before reading code to understand, change or judge it, read the project wiki (`openwiki/`, index first; see `sayg-setup`), then only the code it points to. Say when the wiki is missing or stale for the area, and update it with the change.
+
 Goal: a structure where every new idea can start as a clean greenfield **inside** the product, without rewriting the rest, and where any cell can later be extracted into its own service.
 
 ## Reference shape (default proposal)

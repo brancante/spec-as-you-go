@@ -22,6 +22,7 @@ frame → scout → architect → slice → build → gates → learn ─┐
 
 | Skill | Job |
 |---|---|
+| `sayg-setup` | Environment check and setup: GitHub login, views, CI/Sonar, usage, and a codebase wiki with OpenWiki so every code change reads the wiki first |
 | `sayg-profile` | Builder's technical and business depth, decision style, subscription; how every skill adapts |
 | `sayg-discover` | Entry point. Greenfield or brownfield discovery with a shared core; code assessment, evidence intake, first slices |
 | `sayg-stage` | Maturity ladder S0 sketch → S5 production; exit criteria; gates and approvals scale with stage |
@@ -37,6 +38,7 @@ frame → scout → architect → slice → build → gates → learn ─┐
 | `sayg-fit` | Living product manifesto: problem, segment, differentiation, PMF evidence |
 | `sayg-scale` | Evidence-graded scale, market impact and investor attractiveness read |
 | `sayg-what-would-elon-do` | Shark Tank-style roast of the idea, product or code: first principles, delete parts, 10× not 10%, impossible goals, world-changing scale, blunt comparisons; every hit comes with a rebuild |
+| `sayg-insights` | One researched insight, improvement and critique per PR (web: prior projects, market, what today's tech delivers, how AI shifts expectations), on the strongest model |
 | `sayg-budget` | Usage across 5-hour/weekly/monthly windows, budget mode for routing, upgrades and cheaper providers |
 
 ### SAYG board (widget beside the chat)
@@ -50,11 +52,17 @@ frame → scout → architect → slice → build → gates → learn ─┐
 
 It refreshes every 5 minutes and shortly after `git push` or `gh pr ...`, puts the headline in the status line, and opens by itself in projects that have `.sayg/`. Claude reads the command's output too, so you can ask "what should I merge next?" or "fix the CI on #12". It reads GitHub through `gh api` with your own login (`gh auth login`); sections your login can't read show `n/a`.
 
+### SAYG features (custom view)
+
+`/sayg-features` opens a pane with open PRs and PRs merged in the last 14 days, the **migrations** they carry (schema files, a cell's `contract/`), flagged when merged but not yet deployed to production, and for each PR three short sentences: 💡 **insight**, 🔧 **improvement**, ⚠️ **critique**. A click on a PR opens its thread: the Claude Code session that made it when the PR body links one, else the PR conversation. **Generate insights** starts a background subagent on a strong model (Opus by default, `.sayg/config.json` `insightModel` to change) that reads the wiki, researches the web and writes `.sayg/insights/pr-<n>.json`; it pauses when the budget is tight.
+
+All skills that understand or design run on the strongest model, and every skill that touches code reads the project wiki first (`openwiki/`, set up by `sayg-setup`).
+
 State lives in `.sayg/` in your repo (`intent.md`, `architecture.md`, `stakeholders.md`, `experience/`, `slices/`, `decisions/`, `discoveries.md`, `discovery/`, `product/`, `outbox/` for drafts the user sends) and, per person, in `~/.sayg/` (`profile.md`, `budget/`). Templates are in `templates/`, scripts in `tools/`. Composed skills and the roadmap are in [docs/landscape.md](docs/landscape.md).
 
 ## Status
 
-v0.7: skills, templates, CI templates and `tools/repo-snapshot.sh`. Not field-tested yet. Not built: `sayg-pulse`, `sayg-observe`, CLI/MCP tools, non-Claude agents.
+v0.8: skills, templates, CI templates and `tools/repo-snapshot.sh`. Not field-tested yet. Not built: `sayg-pulse`, `sayg-observe`, CLI/MCP tools, non-Claude agents.
 
 ## Install (Claude Code)
 
