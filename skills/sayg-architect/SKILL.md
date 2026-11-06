@@ -5,11 +5,7 @@ description: Use when starting a new product or when the current structure resis
 
 # sayg-architect
 
-> Adapt questions, vocabulary, evidence and autonomy to the builder profile (`sayg-profile`), per area of depth.
-
-> **Model:** understanding the idea, designing it and shaping its interface with the code run on the strongest model available at high effort (Opus by default, the top tier when the stakes justify it). If this session runs a weaker model, do those steps in a subagent with `model: opus`; mechanical steps follow `sayg-slice` routing.
-
-> **Wiki first:** before reading code to understand, change or judge it, read the project wiki (`openwiki/`, index first; see `sayg-setup`), then only the code it points to. Say when the wiki is missing or stale for the area, and update it with the change.
+> Adapt to the builder profile (`sayg-discover`). Design runs on the strongest model (a subagent with `model: opus` if this session is weaker). Read `openwiki/` before code.
 
 Goal: a structure where every new idea can start as a clean greenfield **inside** the product, without rewriting the rest, and where any cell can later be extracted into its own service.
 
@@ -42,7 +38,7 @@ Start from `templates/architecture/` (structure guide, `cell.json`, boundary rul
 2. Propose **2–3 stack options** with trade-offs, recommending one. Default bias for a solo fixer: one language end-to-end, typed contracts shared between front and back, one relational database, one deploy target. Name versions only after checking current releases.
 3. Draw the first C4 context + container view (Mermaid in `.sayg/architecture.md`). Keep it to one screen.
 4. Map intent to the first 1–3 cells. Each cell must be justifiable as a capability someone could own, not a technical layer.
-5. Write the **boundary rules** as code (dependency-cruiser, Nx module boundaries, import-linter, ArchUnit — whatever fits the stack) and wire them into CI via `sayg-pipeline`. These are the architecture fitness functions; `sayg-gates` runs them.
+5. Write the **boundary rules** as code (dependency-cruiser, Nx module boundaries, import-linter, ArchUnit — whatever fits the stack) and wire them into CI via `sayg-gates`. These are the architecture fitness functions; `sayg-gates` runs them.
 6. Record each choice as an ADR (stack, database, auth, deploy, cell boundaries).
 
 ## Evolution moves

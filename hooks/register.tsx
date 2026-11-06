@@ -530,7 +530,7 @@ export const register: Register = on => {
                 <Text color={sonar.severeOpen > 0 ? 'error' : 'success'}>BLOCKER/HIGH open: {sonar.severeOpen}</Text>
               </Box>
             ) : (
-              <Text dimColor>No sayg-sonar report yet (set up with sayg-pipeline).</Text>
+              <Text dimColor>No sayg-sonar report yet (set up with sayg-gates).</Text>
             )}
             <Text>
               CI on default branch:{' '}

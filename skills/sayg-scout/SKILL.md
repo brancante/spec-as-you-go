@@ -5,9 +5,7 @@ description: Use before building anything non-trivial in a Spec as you go projec
 
 # sayg-scout
 
-> Adapt questions, vocabulary, evidence and autonomy to the builder profile (`sayg-profile`), per area of depth.
-
-> **Wiki first:** before reading code to understand, change or judge it, read the project wiki (`openwiki/`, index first; see `sayg-setup`), then only the code it points to. Say when the wiki is missing or stale for the area, and update it with the change.
+> Adapt to the builder profile (`sayg-discover`). Read `openwiki/` before searching the repo itself.
 
 The ecosystem moves faster than any list. Search live, every time, and record what you found with its date.
 

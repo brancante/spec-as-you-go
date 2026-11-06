@@ -7,39 +7,29 @@ Living, discovery-driven specs for system thinkers and fixers. An evolution of s
 ## Loop
 
 ```
-profile ─► discover (greenfield | brownfield) ─► stakeholders · stage target
-              │
-         prototype S0–S2 (journeys → clickable UI on mocks → usability test → contract freeze)
-              │
-            fit ◄──────────────── scale (on demand)
+setup ─► discover (profile · greenfield | brownfield · intent · stage · stakeholders)
              │
-frame → scout → architect → slice → build → gates → learn ─┐
-  ▲                           ▲                             │
-  │                        budget (model routing by window) │
-  └──────── discoveries become the next slice ◄─────────────┘
-       pipeline: per-PR checks + Sonar every N merged PRs
+          pitch (fit · scale · roast · insights)
+             │
+ scout → architect → slice (S0–S2 experience, then build) → gates → learn ─┐
+   ▲                   ▲ routed by budget mode (setup)                     │
+   └──────────── discoveries become the next slice ◄───────────────────────┘
 ```
+
+Eight skills:
 
 | Skill | Job |
 |---|---|
-| `sayg-setup` | Environment check and setup: GitHub login, views, CI/Sonar, usage, and a codebase wiki with OpenWiki so every code change reads the wiki first |
-| `sayg-profile` | Builder's technical and business depth, decision style, subscription; how every skill adapts |
-| `sayg-discover` | Entry point. Greenfield or brownfield discovery with a shared core; code assessment, evidence intake, first slices |
-| `sayg-stage` | Maturity ladder S0 sketch → S5 production; exit criteria; gates and approvals scale with stage |
-| `sayg-prototype` | Experience first (S0–S2): journeys, clickable UI on contract mocks, usability tests, contract freeze |
-| `sayg-stakeholders` | Stakeholder map, overlap detection with other repos/teams, division of work, shared contracts, approvals, RFC drafts |
-| `sayg-frame` | Intent, constraints, success signals |
+| `sayg-setup` | Environment (GitHub login, views, CI/Sonar), codebase wiki with OpenWiki and the wiki-first rule, AI capacity across 5-hour/weekly/monthly windows and the budget mode |
+| `sayg-discover` | Entry point: builder profile, greenfield or brownfield discovery, intent and target stage, stakeholders and overlaps with other repos, first slices |
 | `sayg-scout` | Live search for skills, MCP servers, libs: adopt / adapt / build |
 | `sayg-architect` | Fast reference architecture: front + back in one repo, organized as cells (greenfields inside the product) |
-| `sayg-slice` | Smallest verifiable spec + model routing |
-| `sayg-gates` | Security, architecture, performance checks per slice |
-| `sayg-learn` | Reconcile spec and code, ADRs, discoveries, drift sweep |
-| `sayg-pipeline` | GitHub Actions: per-PR checks and SonarQube Community Build scan every N merged PRs |
-| `sayg-fit` | Living product manifesto: problem, segment, differentiation, PMF evidence |
-| `sayg-scale` | Evidence-graded scale, market impact and investor attractiveness read |
-| `sayg-what-would-elon-do` | Shark Tank-style roast of the idea, product or code: first principles, delete parts, 10× not 10%, impossible goals, world-changing scale, blunt comparisons; every hit comes with a rebuild |
-| `sayg-insights` | One researched insight, improvement and critique per PR (web: prior projects, market, what today's tech delivers, how AI shifts expectations), on the strongest model |
-| `sayg-budget` | Usage across 5-hour/weekly/monthly windows, budget mode for routing, upgrades and cheaper providers |
+| `sayg-slice` | Stage ladder S0 sketch → S5 production, experience-first prototyping, smallest verifiable spec, model routing |
+| `sayg-gates` | Security, architecture, performance and approval gates per slice; the free CI + Sonar pipeline |
+| `sayg-learn` | Reconcile spec and code, ADRs, discoveries, drift sweep, stage promotion |
+| `sayg-pitch` | Product judgment in four modes: fit (living manifesto), scale (investor read), roast ("what would Elon do"), insights (one researched insight, improvement and critique per PR) |
+
+Skills that understand or design run on the strongest model; every skill that touches code reads the project wiki first.
 
 ### SAYG board (widget beside the chat)
 
@@ -48,7 +38,7 @@ frame → scout → architect → slice → build → gates → learn ─┐
 - **PRs**: merge order (stacked after parent, ready first, then oldest), the next action for each (merge, fix CI naming the failing checks, resolve conflicts, update branch, get a review, address changes, mark ready), file-overlap warnings, stale PRs and reviews waiting on you.
 - **Health**: latest `sayg-sonar` report (gate, coverage, duplication, BLOCKER/HIGH), CI pass rate and median duration on the default branch, Dependabot, code scanning and secret scanning alerts by severity, Sonar security issues and hotspots.
 - **Flow**: PRs merged in 7 days, median open-to-merge time, stale PRs, deploys, cells by stage, slices by status, open discoveries.
-- **AI**: your plan's 5-hour and weekly windows with reset times, the budget mode `sayg-budget` would set, session cost and context used, and the skills used this session.
+- **AI**: your plan's 5-hour and weekly windows with reset times, the budget mode `sayg-setup` would set, session cost and context used, and the skills used this session.
 
 It refreshes every 5 minutes and shortly after `git push` or `gh pr ...`, puts the headline in the status line, and opens by itself in projects that have `.sayg/`. Claude reads the command's output too, so you can ask "what should I merge next?" or "fix the CI on #12". It reads GitHub through `gh api` with your own login (`gh auth login`); sections your login can't read show `n/a`.
 
@@ -56,13 +46,11 @@ It refreshes every 5 minutes and shortly after `git push` or `gh pr ...`, puts t
 
 `/sayg-features` opens a pane with open PRs and PRs merged in the last 14 days, the **migrations** they carry (schema files, a cell's `contract/`), flagged when merged but not yet deployed to production, and for each PR three short sentences: 💡 **insight**, 🔧 **improvement**, ⚠️ **critique**. A click on a PR opens its thread: the Claude Code session that made it when the PR body links one, else the PR conversation. **Generate insights** starts a background subagent on a strong model (Opus by default, `.sayg/config.json` `insightModel` to change) that reads the wiki, researches the web and writes `.sayg/insights/pr-<n>.json`; it pauses when the budget is tight.
 
-All skills that understand or design run on the strongest model, and every skill that touches code reads the project wiki first (`openwiki/`, set up by `sayg-setup`).
-
 State lives in `.sayg/` in your repo (`intent.md`, `architecture.md`, `stakeholders.md`, `experience/`, `slices/`, `decisions/`, `discoveries.md`, `discovery/`, `product/`, `outbox/` for drafts the user sends) and, per person, in `~/.sayg/` (`profile.md`, `budget/`). Templates are in `templates/`, scripts in `tools/`. Composed skills and the roadmap are in [docs/landscape.md](docs/landscape.md).
 
 ## Status
 
-v0.8: skills, templates, CI templates and `tools/repo-snapshot.sh`. Not field-tested yet. Not built: `sayg-pulse`, `sayg-observe`, CLI/MCP tools, non-Claude agents.
+v0.9: skills, templates, CI templates and `tools/repo-snapshot.sh`. Not field-tested yet. Not built: `sayg-pulse`, `sayg-observe`, CLI/MCP tools, non-Claude agents.
 
 ## Install (Claude Code)
 

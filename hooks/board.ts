@@ -177,7 +177,7 @@ export function cycleHours(merged: { createdAt: string; mergedAt: string }[]): n
 }
 
 /**
- * The budget mode sayg-budget would set from the plan windows: tight past
+ * The budget mode sayg-setup would set from the plan windows: tight past
  * 85% of any window, exhausted at 100%, abundant when the weekly window is
  * under half used with two days or less to its reset.
  */
@@ -324,7 +324,7 @@ export function isPendingDeploy(migration: Migration, mergedAt: string, lastProd
 
 export const SENTENCE_MAX = 180
 
-/** Reads one .sayg/insights/pr-<n>.json written by sayg-insights; undefined when it does not hold the three sentences. */
+/** Reads one .sayg/insights/pr-<n>.json written by sayg-pitch (insights mode); undefined when it does not hold the three sentences. */
 export function parseInsight(text: string): Insight | undefined {
   let raw: any
   try {

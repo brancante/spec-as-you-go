@@ -5,9 +5,7 @@ description: Use at the end of every slice in a Spec as you go project, or when 
 
 # sayg-learn
 
-> Adapt questions, vocabulary, evidence and autonomy to the builder profile (`sayg-profile`), per area of depth.
-
-> **Wiki first:** before reading code to understand, change or judge it, read the project wiki (`openwiki/`, index first; see `sayg-setup`), then only the code it points to. Say when the wiki is missing or stale for the area, and update it with the change.
+> Adapt to the builder profile (`sayg-discover`). Read `openwiki/` before code, and update it when the code changed what it says.
 
 Building is the main source of requirements. Capture them before the context is gone.
 
@@ -18,8 +16,8 @@ Building is the main source of requirements. Capture them before the context is 
 3. **Discoveries**: add new problems, ideas, risks and follow-ups to `.sayg/discoveries.md`, one line each, with a source (slice, gate, user, ecosystem).
 4. **Assumptions**: confirm or retire each `ASSUMED` item in `intent.md` that this slice touched.
 5. **Drift sweep**: scan other slices and decisions that reference files changed here. Mark stale ones `STALE: <reason>` rather than silently editing history.
-6. **Stage**: if the slice completed a stage's exit criteria, propose the promotion (`sayg-stage`) with the evidence and the approvals still needed.
-7. **Next**: propose the next slice from discoveries, ranked by risk retired per effort. If a discovery changes intent, hand it to `sayg-frame`; if it opens a new capability gap, hand it to `sayg-scout`; if it changes what users get or who they are, hand it to `sayg-fit`; if it strains the structure, hand it to `sayg-architect`.
+6. **Stage**: if the slice completed a stage's exit criteria, propose the promotion (`sayg-slice`) with the evidence and the approvals still needed.
+7. **Next**: propose the next slice from discoveries, ranked by risk retired per effort. If a discovery changes intent, hand it to `sayg-discover`; if it opens a new capability gap, hand it to `sayg-scout`; if it changes what users get or who they are, hand it to `sayg-pitch`; if it strains the structure, hand it to `sayg-architect`.
 
 ## Rules
 

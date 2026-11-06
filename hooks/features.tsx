@@ -1,7 +1,7 @@
 // sayg features: a pane with open and recently merged PRs, the migrations
 // they carry, and for each one a researched insight, an improvement and a
 // critique in one short sentence each. A click opens the PR's thread. The
-// sentences come from sayg-insights, run by a background subagent on a
+// sentences come from sayg-pitch (insights mode), run by a background subagent on a
 // strong model with web search; this view only reads what it wrote.
 import { atom, read, update } from 'claude-code'
 import type { EngineInterface, RenderInput } from 'claude-code'
@@ -83,7 +83,7 @@ export function missingInsights(current: Board, known: Record<string, Insight>):
 
 export function insightPrompt(repo: string, prs: number[], lang: string): string {
   return [
-    `Use the spec-as-you-go:sayg-insights skill on ${repo} for PRs ${prs.map(n => `#${n}`).join(', ')}.`,
+    `Use the spec-as-you-go:sayg-pitch skill in insights mode on ${repo} for PRs ${prs.map(n => `#${n}`).join(', ')}.`,
     `For each PR, write .sayg/insights/pr-<number>.json as the skill describes, in ${lang}.`,
     'Read the project wiki (openwiki/) before the code, and research the web before writing.',
     'Do not change any other file, branch or PR.',
@@ -97,7 +97,7 @@ export async function generate($: EngineInterface): Promise<string> {
   if (running.prs.length > 0) return `Already researching ${running.prs.map(n => `#${n}`).join(', ')}.`
   const mode = budgetMode((await read($, ai)).windows, await $.clock.now())
   if (mode === 'tight' || mode === 'exhausted') {
-    return `Budget is ${mode}: insights paused. Run the sayg-insights skill yourself when there is room.`
+    return `Budget is ${mode}: insights paused. Run sayg-pitch in insights mode yourself when there is room.`
   }
   const prs = missingInsights(current, await read($, insights)).slice(0, MAX_PER_RUN)
   if (prs.length === 0) return 'Every PR already has a current insight.'

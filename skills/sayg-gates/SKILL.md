@@ -1,43 +1,39 @@
 ---
 name: sayg-gates
-description: Use after implementing a slice in a Spec as you go project, and before merging. Runs security, architecture and performance gates scaled to the slice's risk notes and writes a gate report into the slice file. Blocks on red security findings.
+description: Use after implementing a slice and before merging, or when setting up CI - runs security, architecture and performance gates scaled to the slice's risk and its cell's stage, checks required approvals, and installs the free pipeline (per-PR lint/typecheck/test, cell boundary rules, secret scan, dependency audit, and a full SonarQube Community Build scan every N merged PRs). Blocks on red security findings.
 ---
 
 # sayg-gates
 
-> Adapt questions, vocabulary, evidence and autonomy to the builder profile (`sayg-profile`), per area of depth.
+> Adapt to the builder profile (`sayg-discover`). Read `openwiki/` before code.
 
-> **Wiki first:** before reading code to understand, change or judge it, read the project wiki (`openwiki/`, index first; see `sayg-setup`), then only the code it points to. Say when the wiki is missing or stale for the area, and update it with the change.
+Run the gates the slice's risk notes name, at least the minimum its stage sets (`sayg-slice`), plus security whenever input, auth, data or dependencies change. Prefer a reviewer subagent over reviewing your own work.
 
-Quality is checked continuously, per slice, in proportion to risk and to the cell's stage (the stage table in `sayg-stage` sets the minimum per gate). Run only the gates the slice's risk notes call for, plus security whenever input, auth, data or dependencies are touched. Stakeholder approvals the stage requires (`sayg-stakeholders`) are part of the gate: a missing sign-off is amber before S4 and red at S5.
+## Security
 
-## Security gate
+Trust boundaries and untrusted input paths; authn/authz on every entry point; secrets and sensitive logging; new dependencies (need, maintenance, license, advisories); run the available scanners and report real output; read the latest `sonar-report` artifact (`gh run download -n sonar-report`) for issues in touched files. **Red** on any exploitable finding; only an ADR can waive it.
 
-- Trust boundaries crossed by this slice; untrusted input paths and how each is validated
-- Authn/authz on every new entry point; secrets handling; logging of sensitive data
-- New dependencies: necessity, maintenance, license, known advisories
-- Run the project's available scanners (SAST, dependency audit, secret scan) and report actual output
-- Read the latest `sonar-report` artifact from `sayg-sonar` if it exists; new security issues or hotspots in files this slice touched count as findings
-- Result is **red** if any exploitable finding is unresolved. Red blocks the merge; the human may only waive it by recording an ADR.
+## Architecture
 
-## Architecture gate
+Run the boundary rules (`templates/architecture/.dependency-cruiser.cjs` or equivalent): a violation is red. Respect `.sayg/decisions/`, cite them; justify new coupling or dependencies; flag what is hard to reverse.
 
-- Run the boundary rules (fitness functions) set up by `sayg-architect`; any violation is red
-- Does the change respect decisions in `.sayg/decisions/`? Cite them.
-- New coupling, new layers or new external dependencies: is each justified, and is a decision record needed?
-- Reversibility: what is hard to undo here? Flag it for the human.
+## Performance
 
-## Performance gate
+State the budget from intent or propose one; measure the touched hot path (benchmark, profile, query plan); record the baseline in the slice.
 
-- State the budget from intent (latency, memory, cost per request) or propose one
-- Measure, don't guess: benchmark, profile or query plan for the hot path touched
-- Record the baseline in the slice so later slices can detect regressions
+## Approvals
 
-## Output
+The stage's required sign-offs (`.sayg/stakeholders.md`): missing is amber before S4, red at S5.
 
-Append a **Gate report** to the slice file: gate, verdict (green/amber/red), evidence (command + result), follow-ups. Amber items go to `.sayg/discoveries.md`.
+Append a **gate report** to the slice: gate, verdict, evidence (command + result), follow-ups; ambers go to `.sayg/discoveries.md`. Never write "looks fine" for a check that did not run.
 
-## Rules
+## Pipeline (install once)
 
-- Evidence over assertion: if a check was not run, say "not run", never "looks fine".
-- Do not review your own work in the same context when a reviewer subagent is available; use one.
+Templates in `templates/ci/`, built for pnpm + Turborepo + TypeScript (adapt commands, not structure):
+
+| Workflow | When | What |
+|---|---|---|
+| `sayg-ci.yml` | every PR and push to main | affected lint/typecheck/test, boundary rules, gitleaks, dependency audit |
+| `sayg-sonar.yml` | every N merged PRs (`SAYG_SCAN_EVERY_N_PRS`, default 10), weekly, on demand | full SonarQube Community Build scan of main; job summary + `sonar-report` artifact |
+
+Copy workflows to `.github/workflows/`, scripts to `.github/sayg/`, `sonar-project.properties` to the root. Sonar mode: **ephemeral** (default, a throwaway container on the runner, no history) or **persistent** (`vars.SONAR_HOST_URL` + `secrets.SONAR_TOKEN`). Optional vars: `SONAR_PROJECT_KEY`, `SAYG_MAX_BLOCKERS` (default 0). Verify with *Run workflow* and report the real result. Community Build analyses main only, which is why the full scan runs after merges.
